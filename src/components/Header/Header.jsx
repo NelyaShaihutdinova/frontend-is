@@ -1,4 +1,6 @@
 import './Header.css';
+import {Link} from "react-router-dom";
+import {clearToken} from "../api.js";
 export default function Header() {
     return (
         <>
@@ -10,23 +12,31 @@ export default function Header() {
                     <nav className="menu">
                         <ul className="menu-list">
                             <li className="menu-item">
-                                <a href="#">show</a>
+                                <Link to="/entity">Tickets</Link>
                             </li>
                             <li className="menu-item">
-                                <a href="#">add</a>
+                                <Link to="/coordinates">Coordinates</Link>
                             </li>
                             <li className="menu-item">
-                                <a href="#">info</a>
+                                <Link to="/person">Person</Link>
                             </li>
                             <li className="menu-item">
-                                <a href="#">update</a>
+                                <Link to="/venue">Venue</Link>
                             </li>
                             <li className="menu-item">
-                                <a href="#">delete</a>
+                                <Link to="/event">Event</Link>
                             </li>
                             <li className="menu-item">
-                                <a href="#">special actions</a>
+                                <Link to="/location">Location</Link>
                             </li>
+                            <li className="menu-item">
+                                <Link to="/" onClick={clearToken}>Logout</Link>
+                            </li>
+                            {(localStorage.getItem("role") == "ADMIN") ? (
+                                <li className="menu-item">
+                                    <Link to="/admin">Admin requests</Link>
+                                </li>
+                            ) : (<li></li>)}
                         </ul>
                     </nav>
                 </div>

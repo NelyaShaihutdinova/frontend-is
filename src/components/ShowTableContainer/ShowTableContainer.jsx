@@ -1,11 +1,11 @@
 import './ShowTableContainer.css';
-import PaginationTable from "../Table/PaginationTable.jsx";
+import TicketPage from "../TicketPage/TicketPage.jsx";
 export default function ShowTableContainer() {
     return (
         <>
             <div className="show-table-container">
                 <div className="table-container">
-                    <PaginationTable/>
+                    <TicketPage/>
                 </div>
             </div>
         </>

@@ -1,7 +1,8 @@
 .show-table-container {
     background-color: #D9D9D9;
-    height: 700px;
+    min-height: 100vh;
     padding: 30px 40px;
+    overflow-y: auto;
 }
 
 table {
