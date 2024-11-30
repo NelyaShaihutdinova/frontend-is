@@ -9,7 +9,7 @@ export default function OrderForm() {
         const username2 = document.querySelector("#username2").value;
         const password2 = document.querySelector("#password2").value;
         const role = document.getElementById("person-role").value;
-        const response = await fetch("http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/auth/register", {
+        const response = await fetch("http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default function OrderForm() {
         e.preventDefault();
         const username1 = document.querySelector("#username1").value;
         const password1 = document.querySelector("#password1").value;
-        const response = await fetch("http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/auth/login", {
+        const response = await fetch("http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

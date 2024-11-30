@@ -5,10 +5,31 @@ import "./CoordinatesPage.css"
 const CoordinatesPage = () => {
     const [data, setData] = useState([]);
 
+    function replaceNullWithZero(obj) {
+        if (Array.isArray(obj)) {
+            return obj.map((item) => replaceNullWithZero(item));
+        } else if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+                if (obj[key] === null) {
+                    obj[key] = 0;
+                } else if (typeof obj[key] === 'object') {
+                    obj[key] = replaceNullWithZero(obj[key]);
+                }
+            }
+        }
+        return obj;
+    }
+
     const fetchData = async () => {
-        console.log(localStorage.getItem("token"))
-        const result = await api.get(`/coordinates/show`);
-        setData(result);
+        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/show`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        const updatedData = replaceNullWithZero(await response.json());
+        setData(updatedData);
     };
 
     useEffect(() => {
@@ -31,7 +52,7 @@ const CoordinatesPage = () => {
 
         const result = await api.post(`/coordinates/create`, coordinates);
         if (result.ok) {
-            setData(result.json());
+            fetchData();
         } else {
             alert("Проверьте, что x, y числа больше нуля и x меньше 703!");
         }
@@ -42,7 +63,7 @@ const CoordinatesPage = () => {
         if (id) {
             id = parseInt(id.value);
         }
-        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/delete/${id}`, {
+        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/delete/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +74,7 @@ const CoordinatesPage = () => {
         if (!(response.ok)) {
             alert("Проверьте, что Coordinates с введённым ID существует и что у Вас есть права на его удаление!");
         } else {
-            setData(await response.json());
+            fetchData();
         }
     }
     const updateTicket = async () => {
@@ -72,7 +93,7 @@ const CoordinatesPage = () => {
             y: y
         }
 
-        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/update/${id}`, {
+        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/update/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -84,7 +105,7 @@ const CoordinatesPage = () => {
         if (!(response.ok)) {
             alert("Проверьте, что x, y числа больше нуля, x меньше 703 и у Вас есть права на их редактирование!");
         } else {
-            setData(await response.json());
+            fetchData();
         }
     }
 

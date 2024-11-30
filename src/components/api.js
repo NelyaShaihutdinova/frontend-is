@@ -1,5 +1,5 @@
 // api.js
-const API_BASE = "http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api";
+const API_BASE = "http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api";
 
 let token = localStorage.getItem("token");
 

@@ -4,11 +4,32 @@ import {api} from "../api.js";
 const PersonPage = () => {
         const [data, setData] = useState([]);
 
-        const fetchData = async () => {
-            console.log(localStorage.getItem("token"))
-            const result = await api.get(`/person/show`);
-            setData(result);
-        };
+    function replaceNullWithZero(obj) {
+        if (Array.isArray(obj)) {
+            return obj.map((item) => replaceNullWithZero(item));
+        } else if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+                if (obj[key] === null) {
+                    obj[key] = 0;
+                } else if (typeof obj[key] === 'object') {
+                    obj[key] = replaceNullWithZero(obj[key]);
+                }
+            }
+        }
+        return obj;
+    }
+
+    const fetchData = async () => {
+        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/person/show`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        const updatedData = replaceNullWithZero(await response.json());
+        setData(updatedData);
+    };
 
         useEffect(() => {
             fetchData();
@@ -36,7 +57,7 @@ const PersonPage = () => {
 
             const result = await api.post(`/person/create`, person);
             if (result.ok) {
-                setData(result.json());
+                fetchData();
             } else {
                 alert("Проверьте, что Location существует, что Weight число больше нуля!");
             }
@@ -47,7 +68,7 @@ const PersonPage = () => {
             if (id) {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/person/delete/${id}`, {
+            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/person/delete/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -58,7 +79,7 @@ const PersonPage = () => {
             if (!(response.ok)) {
                 alert("Проверьте, что Person с введённым ID существует и что у Вас есть права на удаление этого билета!");
             } else {
-                setData(await response.json());
+                fetchData();
             }
         }
 
@@ -83,7 +104,7 @@ const PersonPage = () => {
                 eyeColor: eyeColor,
                 hairColor: hairColor,
             }
-            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/person/update/${id}`, {
+            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/person/update/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -95,7 +116,7 @@ const PersonPage = () => {
             if (!(response.ok)) {
                 alert("Проверьте, что Person с введённым ID, Location существуют, что Weight число больше нуля и у Вас есть права на их редактирование!");
             } else {
-                setData(await response.json());
+                fetchData();
             }
         }
 
