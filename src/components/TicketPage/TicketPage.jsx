@@ -23,7 +23,7 @@ const TicketPage = () => {
         }
 
         const fetchData = async () => {
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/show`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/show`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -50,6 +50,26 @@ const TicketPage = () => {
             let venue = document.querySelector("#venue1");
             let refundable = document.getElementById("refundable1");
             let ticketType = document.getElementById("ticketType1");
+            if (!name.value) {
+                alert("Please enter a name");
+                return;
+            }
+            if (isNaN(price.value) || Number(price.value) <= 0) {
+                alert("Price must be a number more than zero");
+                return;
+            }
+            if (!discount.value || isNaN(discount.value) || Number(discount.value) <= 0 || Number(discount.value) > 100) {
+                alert("Discount must be a number more than zero and less than 100");
+                return;
+            }
+            if (!number.value || isNaN(number.value) || Number(number.value) <= 0) {
+                alert("Number must be a number more than zero");
+                return;
+            }
+            if (!comment.value) {
+                alert("Please enter a comment");
+                return;
+            }
 
             if (name && coordinates && price && discount && number && comment && person && venue && refundable && ticketType && event) {
                 name = name.value;
@@ -82,20 +102,22 @@ const TicketPage = () => {
             console.log(ticket);
 
             const result = await api.post(`/ticket/create`, ticket);
-            console.log(result)
             if (result.ok) {
                 fetchData();
             } else {
-                alert("Проверьте, что Coordinates, Person, Event, Venue существуют, что Price, Number, Discount числа больше нуля и Discount меньше 100!");
+                alert(result.message);
             }
         }
 
         const deleteTicket = async () => {
             let id = document.querySelector("#id3");
-            if (id) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/delete/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/delete/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -104,7 +126,8 @@ const TicketPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Ticket с введённым ID существует и что у Вас есть права на удаление этого билета!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -112,10 +135,13 @@ const TicketPage = () => {
 
         const byEventTicket = async () => {
             let id = document.querySelector("#event8");
-            if (id) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-event/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-event/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -124,7 +150,8 @@ const TicketPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Event с введённым ID существует и что у Вас есть права на удаление этого события!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -132,10 +159,13 @@ const TicketPage = () => {
 
         const byPersonTicket = async () => {
             let id = document.querySelector("#person9");
-            if (id) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-person/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-person/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -144,7 +174,8 @@ const TicketPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Person с введённым ID существует и что у Вас есть права на удаление его билетов!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -152,7 +183,7 @@ const TicketPage = () => {
 
         const byRefundableTicket = async () => {
             let refundable = document.getElementById("refundable6").value;
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-refundable?refundable=${refundable}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-refundable?refundable=${refundable}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -161,7 +192,8 @@ const TicketPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что введённые данные корректны!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -169,19 +201,21 @@ const TicketPage = () => {
 
         const byVenueTicket = async () => {
             let venue = document.querySelector("#venue7");
-            if (venue) {
+            if (venue.value) {
                 venue = venue.value;
+            } else {
+                alert("Please enter a venue name");
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-venue?venue=${venue}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-venue?venue=${venue}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-
             if (!(response.ok)) {
-                alert("Проверьте, что введённые данные корректны!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -189,19 +223,21 @@ const TicketPage = () => {
 
         const byNumberTicket = async () => {
             let number = document.querySelector("#number5");
-            if (number) {
+            if (number.value) {
                 number = parseInt(number.value);
+            } else {
+                alert("Please enter a number")
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-number?number=${number}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/by-number?number=${number}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-
             if (!(response.ok)) {
-                alert("Проверьте, что number является числом больше нуля!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 const result = await response.json();
                 setResult(result);
@@ -223,8 +259,34 @@ const TicketPage = () => {
             let refundable = document.getElementById("refundable2");
             let ticketType = document.getElementById("ticketType2");
 
-            if (id && name && coordinates && price && discount && number && comment && person && venue && refundable && ticketType && event) {
+            if (!name.value) {
+                alert("Please enter a name");
+                return;
+            }
+            if (isNaN(price.value) || Number(price.value) <= 0) {
+                alert("Price must be a number more than zero");
+                return;
+            }
+            if (!discount.value || isNaN(discount.value) || Number(discount.value) <= 0 || Number(discount.value) > 100) {
+                alert("Discount must be a number more than zero and less than 100");
+                return;
+            }
+            if (!number.value || isNaN(number.value) || Number(number.value) <= 0) {
+                alert("Number must be a number more than zero");
+                return;
+            }
+            if (!comment.value) {
+                alert("Please enter a comment");
+                return;
+            }
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a name");
+                return;
+            } else {
                 id = parseInt(id.value);
+            }
+
+            if (name && coordinates && price && discount && number && comment && person && venue && refundable && ticketType && event) {
                 name = name.value;
                 coordinates = parseInt(coordinates.value);
                 person = parseInt(person.value);
@@ -251,7 +313,7 @@ const TicketPage = () => {
                 refundable: refundable,
                 ticketType: ticketType,
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/ticket/update/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/ticket/update/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -261,7 +323,8 @@ const TicketPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Ticket с введённым ID, Coordinates, Person, Event, Venue существуют, что Price, Number, Discount числа больше нуля, Discount меньше 100 и у Вас есть права на их редактирование!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }

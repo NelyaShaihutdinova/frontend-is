@@ -21,7 +21,7 @@ const CoordinatesPage = () => {
     }
 
     const fetchData = async () => {
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/show`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/show`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -40,6 +40,16 @@ const CoordinatesPage = () => {
         let x = document.querySelector("#x1");
         let y = document.querySelector("#y1");
 
+        if (!x.value || isNaN(x.value)) {
+            alert("Please enter a x");
+            return;
+        }
+        if (!y.value || isNaN(y.value)) {
+            alert("Please enter a y");
+            return;
+        }
+
+
         if (x && y) {
             x = parseInt(x.value);
             y = parseInt(y.value);
@@ -54,16 +64,19 @@ const CoordinatesPage = () => {
         if (result.ok) {
             fetchData();
         } else {
-            alert("Проверьте, что x, y числа больше нуля и x меньше 703!");
+            alert(result.message);
         }
     }
 
     const deleteTicket = async () => {
         let id = document.querySelector("#id3");
-        if (id) {
+        if (!id.value || isNaN(id.value)) {
+            alert("Please enter a id");
+            return;
+        } else {
             id = parseInt(id.value);
         }
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/delete/${id}`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/delete/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -72,7 +85,8 @@ const CoordinatesPage = () => {
         });
 
         if (!(response.ok)) {
-            alert("Проверьте, что Coordinates с введённым ID существует и что у Вас есть права на его удаление!");
+            const data = await response.json();
+            alert(data.message);
         } else {
             fetchData();
         }
@@ -82,8 +96,22 @@ const CoordinatesPage = () => {
         let  x = document.querySelector("#x2");
         let y = document.querySelector("#y2");
 
-        if (id && x && y) {
+        if (!id.value || isNaN(id.value)) {
+            alert("Please enter a id");
+            return;
+        } else {
             id = parseInt(id.value);
+        }
+        if (!x.value || isNaN(x.value)) {
+            alert("Please enter a x");
+            return;
+        }
+        if (!y.value || isNaN(y.value)) {
+            alert("Please enter a y");
+            return;
+        }
+
+        if (x && y) {
             x = parseInt(x.value);
             y = parseInt(y.value);
         }
@@ -93,7 +121,7 @@ const CoordinatesPage = () => {
             y: y
         }
 
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/update/${id}`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/coordinates/update/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -103,7 +131,8 @@ const CoordinatesPage = () => {
         });
 
         if (!(response.ok)) {
-            alert("Проверьте, что x, y числа больше нуля, x меньше 703 и у Вас есть права на их редактирование!");
+            const data = await response.json();
+            alert(data.message);
         } else {
             fetchData();
         }

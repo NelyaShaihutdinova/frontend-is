@@ -20,7 +20,7 @@ const LocationPage = () => {
     }
 
     const fetchData = async () => {
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/location/show`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/location/show`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -40,6 +40,19 @@ const LocationPage = () => {
         let y = document.querySelector("#y1");
         let z = document.querySelector("#z1");
 
+        if (!x.value || isNaN(x.value)) {
+            alert("Please enter a x");
+            return;
+        }
+        if (!y.value || isNaN(y.value)) {
+            alert("Please enter a y");
+            return;
+        }
+        if (!z.value || isNaN(z.value)) {
+            alert("Please enter a z");
+            return;
+        }
+
         if (x && y && z) {
             x = parseInt(x.value);
             y = parseInt(y.value);
@@ -56,25 +69,28 @@ const LocationPage = () => {
         if (result.ok) {
             fetchData();
         } else {
-            alert("Проверьте, что x, y, z числа больше нуля!");
+            alert(result.message);
         }
     }
 
     const deleteTicket = async () => {
         let id = document.querySelector("#id3");
-        if (id) {
+        if (!id.value || isNaN(id.value)) {
+            alert("Please enter a id");
+            return;
+        } else {
             id = parseInt(id.value);
         }
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/location/delete/${id}`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/location/delete/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         });
-
         if (!(response.ok)) {
-            alert("Проверьте, что Location с введённым ID существует и что у Вас есть права на его удаление!");
+            const data = await response.json();
+            alert(data.message);
         } else {
             fetchData();
         }
@@ -85,8 +101,27 @@ const LocationPage = () => {
         let y = document.querySelector("#y2");
         let z = document.querySelector("#z2");
 
-        if (id && x && y && z) {
+        if (!id.value || isNaN(id.value)) {
+            alert("Please enter a id");
+            return;
+        } else {
             id = parseInt(id.value);
+        }
+        if (!x.value || isNaN(x.value)) {
+            alert("Please enter a x");
+            return;
+        }
+        if (!y.value || isNaN(y.value)) {
+            alert("Please enter a y");
+            return;
+        }
+        console.log(z)
+        if (!z.value || isNaN(z.value)) {
+            alert("Please enter a z");
+            return;
+        }
+
+        if (x && y && z) {
             x = parseInt(x.value);
             y = parseInt(y.value);
             z = parseInt(z.value);
@@ -98,7 +133,7 @@ const LocationPage = () => {
             z: z
         }
 
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/location/update/${id}`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/location/update/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -108,7 +143,8 @@ const LocationPage = () => {
         });
 
         if (!(response.ok)) {
-            alert("Проверьте, что x, y, z числа больше нуля и у Вас есть права на их редактирование!");
+            const data = await response.json();
+            alert(data.message);
         } else {
             fetchData();
         }
@@ -281,14 +317,14 @@ const LocationPage = () => {
                             id="y2"
                         />
                         <br/>
-                        <label className="text-field__label item" htmlFor="z1"
+                        <label className="text-field__label item" htmlFor="z2"
                         >Z:
                         </label>
                         <input
                             className="text-field__input item"
                             placeholder="z"
                             type="text"
-                            id="z1"
+                            id="z2"
                         />
                         <br/>
                     </div>

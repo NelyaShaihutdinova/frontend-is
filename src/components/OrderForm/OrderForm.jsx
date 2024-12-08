@@ -9,7 +9,7 @@ export default function OrderForm() {
         const username2 = document.querySelector("#username2").value;
         const password2 = document.querySelector("#password2").value;
         const role = document.getElementById("person-role").value;
-        const response = await fetch("http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/auth/register", {
+        const response = await fetch("http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -21,18 +21,14 @@ export default function OrderForm() {
             }),
         });
         if (!(response.ok)) {
-            alert("Ошибка регистрации")
+            const data = await response.json();
+            alert(data.message);
         } else {
             const data = await response.json();
-            if (data.token === "Password must be at least 6 characters") {
-                alert("Пароль должен быть минимум из 6 символов");
-            } else if (data.token === "Username already exists") {
-                alert("Пользователь с таким именем уже существвует");
-            } else {
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("role", "USER");
-                navigate("/entity");
-            }
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", "USER");
+            localStorage.setItem("username", username2);
+            navigate("/entity");
         }
     }
 
@@ -41,7 +37,7 @@ export default function OrderForm() {
         e.preventDefault();
         const username1 = document.querySelector("#username1").value;
         const password1 = document.querySelector("#password1").value;
-        const response = await fetch("http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/auth/login", {
+        const response = await fetch("http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -53,11 +49,12 @@ export default function OrderForm() {
         });
 
         if (!(response.ok)) {
-            alert("Логин или пароль не корректны");
+            alert("The password or username is incorrect");
         } else {
             const data = await response.json();
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
+            localStorage.setItem("username", username1)
             navigate("/entity");
         }
     }

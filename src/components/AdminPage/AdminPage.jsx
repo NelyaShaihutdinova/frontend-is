@@ -20,7 +20,7 @@ const AdminPage = () => {
     }
 
     const fetchData = async () => {
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/auth/admin/requests`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/auth/admin/requests`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -40,7 +40,7 @@ const AdminPage = () => {
         if (id) {
             id = parseInt(id.value);
         }
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/auth/admin/approve/${id}`, {
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/auth/admin/approve/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const AdminPage = () => {
         });
 
         if (!(response.ok)) {
-            alert("Проверьте, что Request с введённым ID существует!");
+            alert("Admin request with this id not found");
         } else {
             fetchData();
         }

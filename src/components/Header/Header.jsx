@@ -9,6 +9,7 @@ export default function Header() {
                     <div className="logo">
                         <img src="../../../public/images/free-icon-ticket-390134.png" alt="logo"/>
                     </div>
+                    <div className="user-info">{localStorage.getItem("username")}</div>
                     <nav className="menu">
                         <ul className="menu-list">
                             <li className="menu-item">

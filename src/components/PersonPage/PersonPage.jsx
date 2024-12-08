@@ -4,32 +4,32 @@ import {api} from "../api.js";
 const PersonPage = () => {
         const [data, setData] = useState([]);
 
-    function replaceNullWithZero(obj) {
-        if (Array.isArray(obj)) {
-            return obj.map((item) => replaceNullWithZero(item));
-        } else if (typeof obj === 'object' && obj !== null) {
-            for (const key in obj) {
-                if (obj[key] === null) {
-                    obj[key] = 0;
-                } else if (typeof obj[key] === 'object') {
-                    obj[key] = replaceNullWithZero(obj[key]);
+        function replaceNullWithZero(obj) {
+            if (Array.isArray(obj)) {
+                return obj.map((item) => replaceNullWithZero(item));
+            } else if (typeof obj === 'object' && obj !== null) {
+                for (const key in obj) {
+                    if (obj[key] === null) {
+                        obj[key] = 0;
+                    } else if (typeof obj[key] === 'object') {
+                        obj[key] = replaceNullWithZero(obj[key]);
+                    }
                 }
             }
+            return obj;
         }
-        return obj;
-    }
 
-    const fetchData = async () => {
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/person/show`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
-        const updatedData = replaceNullWithZero(await response.json());
-        setData(updatedData);
-    };
+        const fetchData = async () => {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/person/show`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            const updatedData = replaceNullWithZero(await response.json());
+            setData(updatedData);
+        };
 
         useEffect(() => {
             fetchData();
@@ -40,6 +40,15 @@ const PersonPage = () => {
             let location = document.querySelector("#location1");
             let eyeColor = document.getElementById("eyeColor1");
             let hairColor = document.getElementById("hairColor1");
+
+            if (!location.value ) {
+                alert("Please enter a location");
+                return;
+            }
+            if (!weight.value || isNaN(weight.value) || Number(weight.value) <= 0) {
+                alert("Please enter a weight");
+                return;
+            }
 
             if (weight && location && eyeColor && hairColor) {
                 weight = parseInt(weight.value);
@@ -59,16 +68,19 @@ const PersonPage = () => {
             if (result.ok) {
                 fetchData();
             } else {
-                alert("Проверьте, что Location существует, что Weight число больше нуля!");
+                alert(result.message);
             }
         }
 
         const deleteTicket = async () => {
             let id = document.querySelector("#id3");
-            if (id) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/person/delete/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/person/delete/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,7 +89,8 @@ const PersonPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Person с введённым ID существует и что у Вас есть права на удаление этого билета!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -89,6 +102,15 @@ const PersonPage = () => {
             let location = document.querySelector("#location2");
             let eyeColor = document.getElementById("eyeColor2");
             let hairColor = document.getElementById("hairColor2");
+
+            if (!location.value ) {
+                alert("Please enter a location");
+                return;
+            }
+            if (!weight.value || isNaN(weight.value)) {
+                alert("Please enter a weight");
+                return;
+            }
 
             if (weight && location && eyeColor && hairColor && id) {
                 id = parseInt(id.value);
@@ -104,7 +126,7 @@ const PersonPage = () => {
                 eyeColor: eyeColor,
                 hairColor: hairColor,
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/person/update/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/person/update/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -114,7 +136,8 @@ const PersonPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Person с введённым ID, Location существуют, что Weight число больше нуля и у Вас есть права на их редактирование!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }

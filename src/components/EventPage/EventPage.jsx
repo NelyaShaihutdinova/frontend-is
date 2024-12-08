@@ -4,32 +4,32 @@ import {api} from "../api.js";
 const EventPage = () => {
         const [data, setData] = useState([]);
 
-    function replaceNullWithZero(obj) {
-        if (Array.isArray(obj)) {
-            return obj.map((item) => replaceNullWithZero(item));
-        } else if (typeof obj === 'object' && obj !== null) {
-            for (const key in obj) {
-                if (obj[key] === null) {
-                    obj[key] = 0;
-                } else if (typeof obj[key] === 'object') {
-                    obj[key] = replaceNullWithZero(obj[key]);
+        function replaceNullWithZero(obj) {
+            if (Array.isArray(obj)) {
+                return obj.map((item) => replaceNullWithZero(item));
+            } else if (typeof obj === 'object' && obj !== null) {
+                for (const key in obj) {
+                    if (obj[key] === null) {
+                        obj[key] = 0;
+                    } else if (typeof obj[key] === 'object') {
+                        obj[key] = replaceNullWithZero(obj[key]);
+                    }
                 }
             }
+            return obj;
         }
-        return obj;
-    }
 
-    const fetchData = async () => {
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/event/show`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
-        const updatedData = replaceNullWithZero(await response.json());
-        setData(updatedData);
-    };
+        const fetchData = async () => {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/event/show`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            const updatedData = replaceNullWithZero(await response.json());
+            setData(updatedData);
+        };
 
         useEffect(() => {
             fetchData();
@@ -39,6 +39,16 @@ const EventPage = () => {
             let name = document.querySelector("#name1");
             let ticketsCount = document.querySelector("#ticketsCount1");
             let eventType = document.getElementById("eventType1");
+
+            if (!name.value) {
+                alert("Please enter a name");
+                return;
+            }
+            if (!ticketsCount.value || isNaN(ticketsCount.value) || Number(ticketsCount.value) <= 0) {
+                alert("Please enter a ticket count");
+                return;
+            }
+
 
             if (name && ticketsCount && eventType) {
                 name = name.value;
@@ -57,16 +67,19 @@ const EventPage = () => {
             if (result.ok) {
                 fetchData();
             } else {
-                alert("Проверьте, что TicketCount число больше нуля!");
+                alert(result.message);
             }
         }
 
         const deleteTicket = async () => {
             let id = document.querySelector("#id3");
-            if (id) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/event/delete/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/event/delete/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,7 +88,8 @@ const EventPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Event с введённым ID существует и что у Вас есть права на удаление этого билета!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -86,9 +100,22 @@ const EventPage = () => {
             let name = document.querySelector("#name2");
             let ticketsCount = document.querySelector("#ticketsCount2");
             let eventType = document.getElementById("eventType2");
-
-            if (id && name && ticketsCount && eventType) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
+            }
+            if (!name.value) {
+                alert("Please enter a name");
+                return;
+            }
+            if (!ticketsCount.value || isNaN(ticketsCount.value) || Number(ticketsCount.value) <= 0) {
+                alert("Please enter a ticket count");
+                return;
+            }
+
+            if (name && ticketsCount && eventType) {
                 name = name.value;
                 ticketsCount = parseInt(ticketsCount.value);
                 eventType = eventType.value;
@@ -100,7 +127,7 @@ const EventPage = () => {
                 eventType: eventType,
             }
 
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/event/update/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/event/update/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -110,7 +137,8 @@ const EventPage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что TicketCount число больше нуля и у Вас есть права на их редактирование!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }

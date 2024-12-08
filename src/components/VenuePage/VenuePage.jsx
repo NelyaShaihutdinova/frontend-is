@@ -4,32 +4,32 @@ import {api} from "../api.js";
 const VenuePage = () => {
         const [data, setData] = useState([]);
 
-    function replaceNullWithZero(obj) {
-        if (Array.isArray(obj)) {
-            return obj.map((item) => replaceNullWithZero(item));
-        } else if (typeof obj === 'object' && obj !== null) {
-            for (const key in obj) {
-                if (obj[key] === null) {
-                    obj[key] = 0;
-                } else if (typeof obj[key] === 'object') {
-                    obj[key] = replaceNullWithZero(obj[key]);
+        function replaceNullWithZero(obj) {
+            if (Array.isArray(obj)) {
+                return obj.map((item) => replaceNullWithZero(item));
+            } else if (typeof obj === 'object' && obj !== null) {
+                for (const key in obj) {
+                    if (obj[key] === null) {
+                        obj[key] = 0;
+                    } else if (typeof obj[key] === 'object') {
+                        obj[key] = replaceNullWithZero(obj[key]);
+                    }
                 }
             }
+            return obj;
         }
-        return obj;
-    }
 
-    const fetchData = async () => {
-        const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/venue/show`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
-        const updatedData = replaceNullWithZero(await response.json());
-        setData(updatedData);
-    };
+        const fetchData = async () => {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/venue/show`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            const updatedData = replaceNullWithZero(await response.json());
+            setData(updatedData);
+        };
 
         useEffect(() => {
             fetchData();
@@ -39,6 +39,16 @@ const VenuePage = () => {
             let name = document.querySelector("#name1");
             let capacity = document.querySelector("#capacity1");
             let venueType = document.getElementById("venueType1");
+
+            if (!name.value) {
+                alert("Please enter a name");
+                return;
+            }
+            if (!capacity.value || isNaN(capacity.value) || Number(capacity.value) <= 0) {
+                alert("Please enter a capacity");
+                return;
+            }
+
 
             if (name && capacity && venueType) {
                 name = name.value;
@@ -57,16 +67,19 @@ const VenuePage = () => {
             if (result.ok) {
                 fetchData();
             } else {
-                alert("Проверьте, что Capacity число больше нуля!");
+                alert(result.message);
             }
         }
 
         const deleteTicket = async () => {
             let id = document.querySelector("#id3");
-            if (id) {
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/venue/delete/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/venue/delete/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,7 +88,8 @@ const VenuePage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Venue с введённым ID существует и что у Вас есть права на удаление этого билета!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -86,9 +100,22 @@ const VenuePage = () => {
             let name = document.querySelector("#name2");
             let capacity = document.querySelector("#capacity2");
             let venueType = document.getElementById("venueType2");
+            if (!id.value || isNaN(id.value)) {
+                alert("Please enter a id");
+                return;
+            } else {
+                id = parseInt(id.value);
+            }
+            if (!name.value) {
+                alert("Please enter a name");
+                return;
+            }
+            if (!capacity.value || isNaN(capacity.value) || Number(capacity.value) <= 0) {
+                alert("Please enter a capacity");
+                return;
+            }
 
             if (id && name && capacity && venueType) {
-                id = parseInt(id.value);
                 name = name.value;
                 capacity = parseInt(capacity.value);
                 venueType = venueType.value;
@@ -100,7 +127,7 @@ const VenuePage = () => {
                 venueType: venueType,
             }
 
-            const response = await fetch(`http://localhost:9814/is-lab1-backend-1.0-SNAPSHOT/api/venue/update/${id}`, {
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/venue/update/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -110,7 +137,8 @@ const VenuePage = () => {
             });
 
             if (!(response.ok)) {
-                alert("Проверьте, что Capacity число больше нуля и у Вас есть права на их редактирование!");
+                const data = await response.json();
+                alert(data.message);
             } else {
                 fetchData();
             }
@@ -281,10 +309,9 @@ const VenuePage = () => {
                             <br/>
                             <label className="item">VenueType:
                                 <select id="venueType2">
-                                    <option value="OPERA">Opera</option>
-                                    <option value="FOOTBALL">Football</option>
-                                    <option value="THEATRE_PERFORMANCE">Theatre_performance</option>
-                                    <option value="EXPOSITION">Exposition</option>
+                                    <option value="PUB">Pub</option>
+                                    <option value="LOFT">Loft</option>
+                                    <option value="CINEMA">Cinema</option>
                                 </select>
                             </label>
                         </div>
