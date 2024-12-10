@@ -30,8 +30,7 @@ export const api = {
             headers: headers(),
             body: JSON.stringify(data),
         });
-        const updatedData = replaceNullWithZero(response.json());
-        return updatedData;
+        return response;
     }
 };
 

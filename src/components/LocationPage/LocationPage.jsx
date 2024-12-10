@@ -4,6 +4,23 @@ import {api} from "../api.js";
 const LocationPage = () => {
     const [data, setData] = useState([]);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const goToPreviousPage = () => {
+        console.log(currentPage)
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            fetchData(currentPage - 1)
+        }
+        console.log(currentPage)
+    };
+
+    const goToNextPage = () => {
+        console.log(currentPage)
+        setCurrentPage(currentPage + 1);
+        console.log(currentPage)
+        fetchData(currentPage + 1)
+    };
+
     function replaceNullWithZero(obj) {
         if (Array.isArray(obj)) {
             return obj.map((item) => replaceNullWithZero(item));
@@ -19,8 +36,33 @@ const LocationPage = () => {
         return obj;
     }
 
-    const fetchData = async () => {
-        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/location/show`, {
+    const fetchData = async (page) => {
+        let filterColomn = document.getElementById("filter-coloumn");
+        let filter = document.querySelector("#filter");
+        let sorted = document.getElementById("sorted");
+        if (filterColomn && filter) {
+            filterColomn = filterColomn.value;
+            filter = filter.value;
+        }
+        if (sorted) {
+            sorted = sorted.value;
+        }
+        let url = "?";
+        if (filterColomn && filter) {
+            url += "&filter-value=" + filter + "&filter-column=" + filterColomn;
+        }
+        if (page) {
+            url += "&page=" + page;
+        }
+        if (sorted) {
+            url += "&sorted=" + sorted;
+        }
+        if (url === "?") {
+            url = "";
+        }
+        console.log(sorted)
+        console.log(url);
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/location/show${url}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -32,7 +74,7 @@ const LocationPage = () => {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchPaginationData();
     }, []);
 
     const createTicket = async () => {
@@ -67,9 +109,10 @@ const LocationPage = () => {
 
         const result = await api.post(`/location/create`, location);
         if (result.ok) {
-            fetchData();
+            fetchPaginationData();
         } else {
-            alert(result.message);
+            const data = await result.json();
+            alert(data.message);
         }
     }
 
@@ -92,7 +135,7 @@ const LocationPage = () => {
             const data = await response.json();
             alert(data.message);
         } else {
-            fetchData();
+            fetchPaginationData();
         }
     }
     const updateTicket = async () => {
@@ -146,21 +189,19 @@ const LocationPage = () => {
             const data = await response.json();
             alert(data.message);
         } else {
-            fetchData();
+            fetchPaginationData();
         }
     }
 
     const fetchPaginationData = async () => {
+        console.log(currentPage);
+        console.log(typeof currentPage);
         let filterColomn = document.getElementById("filter-coloumn");
         let filter = document.querySelector("#filter");
-        let page = document.querySelector("#pagination");
         let sorted = document.getElementById("sorted");
         if (filterColomn && filter) {
             filterColomn = filterColomn.value;
             filter = filter.value;
-        }
-        if (page) {
-            page = page.value;
         }
         if (sorted) {
             sorted = sorted.value;
@@ -169,12 +210,8 @@ const LocationPage = () => {
         if (filterColomn && filter) {
             url += "&filter-value=" + filter + "&filter-column=" + filterColomn;
         }
-        if (page) {
-            if (parseInt(Number(page)) == page) {
-                url += "&page=" + page;
-            } else {
-                alert("Номер страницы для пагинации должен быть числом")
-            }
+        if (currentPage) {
+            url += "&page=" + currentPage;
         }
         if (sorted) {
             url += "&sorted=" + sorted;
@@ -182,8 +219,17 @@ const LocationPage = () => {
         if (url === "?") {
             url = "";
         }
-        const result = await api.get(`/location/show${url}`);
-        setData(result);
+        console.log(sorted)
+        console.log(url);
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/location/show${url}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        const updatedData = replaceNullWithZero(await response.json());
+        setData(updatedData);
     };
 
     return (<>
@@ -228,7 +274,7 @@ const LocationPage = () => {
                     />
                     <br/>
                     <label>Столбец для сортировки:
-                        <select id="filter-coloumn">
+                        <select id="sorted">
                             <option value="id">ID</option>
                             <option value="x">X</option>
                             <option value="y">Y</option>
@@ -236,17 +282,22 @@ const LocationPage = () => {
                         </select>
                     </label>
                     <br/>
-                    <label className="text-field__label" htmlFor="pagination"
-                    >Пагинация:
-                    </label>
-                    <input
-                        className="text-field__input ticket"
-                        placeholder="pagination"
-                        type="text"
-                        id="pagination"
-                    />
-                    <br/>
-                    <br/>
+                    <div style={{marginTop: "20px", display: "flex", justifyContent: "center"}}>
+                        <button
+                            onClick={goToPreviousPage}
+                            disabled={currentPage === 1}
+                            style={{marginRight: "10px", background: "#1a1a1a", paddingTop: "0px"}}
+                        >
+                            Previous
+                        </button>
+                        <span>Page {currentPage}</span>
+                        <button
+                            onClick={goToNextPage}
+                            style={{marginLeft: "10px", background: "#1a1a1a", paddingTop: "0px"}}
+                        >
+                            Next
+                        </button>
+                    </div>
                     <button className="showBtn" onClick={fetchPaginationData}>Show</button>
                 </div>
                 <div className="createBlock">
