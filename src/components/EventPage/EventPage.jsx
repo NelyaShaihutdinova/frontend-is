@@ -116,13 +116,20 @@ const EventPage = () => {
 
         const deleteTicket = async () => {
             let id = document.querySelector("#id3");
+            let replaceId = document.querySelector("#id4");
             if (!id.value || isNaN(id.value)) {
                 alert("Please enter a id");
                 return;
             } else {
                 id = parseInt(id.value);
             }
-            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/event/delete/${id}`, {
+            if (!replaceId.value || isNaN(replaceId.value)) {
+                alert("Please enter a id to replace");
+                return;
+            } else {
+                replaceId = parseInt(replaceId.value);
+            }
+            const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/event/delete/${id}?replace=${replaceId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -383,6 +390,15 @@ const EventPage = () => {
                                 id="id3"
                             />
                             <br/>
+                            <label className="text-field__label item" htmlFor="id4"
+                            >Event ID to replace in Ticket:
+                            </label>
+                            <input
+                                className="text-field__input item"
+                                placeholder="id"
+                                type="text"
+                                id="id4"
+                            />
                         </div>
                         <br/>
                         <button className="showBtn" onClick={deleteTicket}>Delete</button>
