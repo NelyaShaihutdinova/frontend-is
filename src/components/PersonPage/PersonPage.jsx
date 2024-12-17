@@ -90,6 +90,10 @@ const PersonPage = () => {
                 alert("Please enter a weight");
                 return;
             }
+            if (!location.value || isNaN(location.value)) {
+                alert("Location must be a number")
+                return;
+            }
 
             if (weight && location && eyeColor && hairColor) {
                 weight = parseInt(weight.value);
@@ -158,6 +162,10 @@ const PersonPage = () => {
             }
             if (!weight.value || isNaN(weight.value)) {
                 alert("Please enter a weight");
+                return;
+            }
+            if (!location.value || isNaN(location.value)) {
+                alert("Location must be a number")
                 return;
             }
 

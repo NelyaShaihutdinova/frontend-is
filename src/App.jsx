@@ -8,6 +8,7 @@ import VenueContainer from "./components/VenuePage/VenueContainer.jsx";
 import LocationContainer from "./components/LocationPage/LocationContainer.jsx";
 import PersonContainer from "./components/PersonPage/PersonContainer.jsx";
 import AdminContainer from "./components/AdminPage/AdminContainer.jsx";
+import ImportContainer from "./components/ImportPage/ImportContainer.jsx";
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/location" element={<ProtectedRoute><LocationContainer/></ProtectedRoute>}/>
             <Route path="/person" element={<ProtectedRoute><PersonContainer/></ProtectedRoute>}/>
             <Route path="/admin" element={<ProtectedRoute><AdminContainer/></ProtectedRoute>}/>
+            <Route path="/import" element={<ProtectedRoute><ImportContainer/></ProtectedRoute>}/>
         </Routes>
     )
 }

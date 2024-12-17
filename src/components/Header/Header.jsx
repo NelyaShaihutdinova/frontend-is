@@ -31,6 +31,9 @@ export default function Header() {
                                 <Link to="/location">Location</Link>
                             </li>
                             <li className="menu-item">
+                                <Link to="/import">Import</Link>
+                            </li>
+                            <li className="menu-item">
                                 <Link to="/" onClick={clearToken}>Logout</Link>
                             </li>
                             {(localStorage.getItem("role") == "ADMIN") ? (

@@ -112,6 +112,26 @@ const TicketPage = () => {
                 return;
             }
 
+            if (!coordinates.value || isNaN(coordinates.value)) {
+                alert("Coordinates must be a number")
+                return;
+            }
+
+            if (!person.value || isNaN(person.value)) {
+                alert("Person must be a number")
+                return;
+            }
+
+            if (!venue.value || isNaN(venue.value)) {
+                alert("Venue must be a number")
+                return;
+            }
+
+            if (!event.value || isNaN(event.value)) {
+                alert("Event must be a number")
+                return;
+            }
+
             if (name && coordinates && price && discount && number && comment && person && venue && refundable && ticketType && event) {
                 name = name.value;
                 coordinates = parseInt(coordinates.value);
@@ -328,6 +348,25 @@ const TicketPage = () => {
                 id = parseInt(id.value);
             }
 
+            if (!coordinates.value || isNaN(coordinates.value)) {
+                alert("Coordinates must be a number")
+                return;
+            }
+
+            if (!person.value || isNaN(person.value)) {
+                alert("Person must be a number")
+                return;
+            }
+
+            if (!venue.value || isNaN(venue.value)) {
+                alert("Venue must be a number")
+                return;
+            }
+
+            if (!event.value || isNaN(event.value)) {
+                alert("Event must be a number")
+                return;
+            }
             if (name && coordinates && price && discount && number && comment && person && venue && refundable && ticketType && event) {
                 name = name.value;
                 coordinates = parseInt(coordinates.value);
