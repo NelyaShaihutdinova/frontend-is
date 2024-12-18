@@ -17,7 +17,7 @@
     },
     "event": {
       "name": "sadasd",
-      "ticketCount": 100,
+      "ticketsCount": 100,
       "eventType": "FOOTBALL"
     },
     "price": 12,
@@ -33,7 +33,7 @@
     }
   },
   {
-    "name": "dfdasdasdasdasdasf",
+    "name": "dfdlhhkkhhhkklf",
     "coordinates": {
       "x": 1,
       "y": 2
@@ -49,9 +49,7 @@
       }
     },
     "event": {
-      "name": "sadasd",
-      "ticketCount": 100,
-      "eventType": "FOOTBALL"
+      "id": 1
     },
     "price": 12,
     "ticketType": "VIP",
@@ -60,7 +58,7 @@
     "comment": "hi wow йоу",
     "refundable": true,
     "venue": {
-      "name": "sadasd",
+      "id": 1,
       "capacity": 100,
       "venueType": "PUB"
     }
