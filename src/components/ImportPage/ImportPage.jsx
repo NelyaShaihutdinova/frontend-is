@@ -58,14 +58,51 @@ const ImportPage = () => {
                 alert('File uploaded successfully');
                 fetchPaginationData();
             } else {
-                const data = await response.json();
-                alert(data.message);
+                const data = await response.text();
+                alert(data);
                 fetchPaginationData();
             }
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
+    const downloadImport = async () => {
+        let id = document.querySelector("#id3");
+        if (!id.value || isNaN(id.value)) {
+            alert("Please enter a id");
+            return;
+        } else {
+            id = parseInt(id.value);
+        }
+        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/import/download/${id}`, {
+            method: "POST",
+            responseType: 'blob',
+            headers: {
+                "Accept": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+
+        if (!(response.ok)) {
+            const data = await response.text();
+            alert(data);
+        } else {
+            const contentDisposition = response.headers.get('Content-Disposition');
+            if (!contentDisposition) {
+                throw new Error('Content-Disposition header is missing in the response');
+            }
+
+            const fileName = contentDisposition.split('filename=')[1].replace(/"/g, '');
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            const url = window.URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+        }
+    }
 
     const fetchHistory = async (page) => {
         let filterColomn = document.getElementById("filter-coloumn");
@@ -226,10 +263,26 @@ const ImportPage = () => {
 
                 <div className="deleteBlock">
                     <div>Import File</div>
-                    <input type="file" accept=".json" onChange={handleFileChange}/>
+                    <input type="file" accept=".json" name="dataFile" onChange={handleFileChange}/>
                     <br/>
                     <br/>
                     <button className="showBtn" onClick={handleUpload}>Upload</button>
+                </div>
+                <div className="deleteBlock">
+                    <div className="deleteFields">
+                        <label className="text-field__label item" htmlFor="id3"
+                        >Import ID:
+                        </label>
+                        <input
+                            className="text-field__input item"
+                            placeholder="id"
+                            type="text"
+                            id="id3"
+                        />
+                        <br/>
+                    </div>
+                    <br/>
+                    <button className="showBtn" onClick={downloadImport}>Download</button>
                 </div>
             </div>
         </>

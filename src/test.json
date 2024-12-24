@@ -1,6 +1,6 @@
 [
   {
-    "name": "dfdf",
+    "name": "654321",
     "coordinates": {
       "x": 1,
       "y": 2
@@ -33,7 +33,7 @@
     }
   },
   {
-    "name": "dfdlhhkkhhhkklf",
+    "name": "123456",
     "coordinates": {
       "x": 1,
       "y": 2
@@ -49,17 +49,17 @@
       }
     },
     "event": {
-      "id": 1
+      "id": 6
     },
     "price": 12,
     "ticketType": "VIP",
-    "discount": 11,
+    "discount": 9,
     "number": 10,
     "comment": "hi wow йоу",
     "refundable": true,
     "venue": {
-      "id": 1,
-      "capacity": 100,
+      "id": 2,
+      "capacity": 1000,
       "venueType": "PUB"
     }
   }
