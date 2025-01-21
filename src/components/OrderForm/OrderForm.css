@@ -6,23 +6,11 @@
     vertical-align: top;
     font-family: inherit;
     margin-bottom: 1rem;
-}
-
-IMG.imgLogo {
-    width: 90%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background: #ffffff;
-    border-radius: 5px;
-    padding: 2%;
+    z-index: 1;
 }
 
 .registrationFields {
-    margin-top: 20px;
-    margin-left: 80px;
-    margin-right: auto;
-    margin-bottom: 1rem;
+    margin: 20px auto 1rem 80px;
 }
 
 .text-field__label {
@@ -31,46 +19,7 @@ IMG.imgLogo {
     font-family: inherit;
 }
 
-#password1 {
-    display: block;
-    width: 70%;
-    height: calc(1.5rem + 2px);
-    margin: 0;
-    font-family: inherit;
-    color: #361d62;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    background: transparent;
-    border-bottom: 1px solid #f1e7e7;
-}
-
-#password2 {
-    display: block;
-    width: 70%;
-    height: calc(1.5rem + 2px);
-    margin: 0;
-    font-family: inherit;
-    color: #361d62;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    background: transparent;
-    border-bottom: 1px solid #f1e7e7;
-}
-
-#username1 {
-    display: block;
-    width: 70%;
-    height: calc(1.5rem + 2px);
-    margin: 0;
-    font-family: inherit;
-    color: #361d62;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    background: transparent;
-    border-bottom: 1px solid #f1e7e7;
-}
-
-#username2 {
+.password .username {
     display: block;
     width: 70%;
     height: calc(1.5rem + 2px);
@@ -107,39 +56,11 @@ IMG.imgLogo {
     border: 0 solid #e4e4e7;
 }
 
-.text-field__icon::before {
-    content: "";
-    color: #bdbdbdff;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    bottom: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.text-field__icon input {
-    padding-left: 2rem;
-}
-
 input {
     height: 20px;
-    padding-left: 2rem;
 }
 
-i.fa {
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    text-align: center;
-    margin-right: -26px;
-    position: relative;
-    z-index: 1;
-    float: left;
-    color: #bdbdbd;
-}
-
-.btn-new {
+.btn-order {
     margin-top: 20px;
     margin-bottom: 20px;
     text-align: center;
@@ -157,7 +78,7 @@ i.fa {
     );
 }
 
-.btn-new:hover {
+.btn-order:hover {
     background-position: right center;
 }
 
@@ -239,8 +160,26 @@ label.tabT.active {
     transition: 1s;
 }
 
-#UserAccountTab {
-    margin-left: 240px;
+.form-container {
+    height: 100vh;
+    width: 100vw;
+    background-color: #2C2C2C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+.main-image-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+}
+
+.main-image-left {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+}
 

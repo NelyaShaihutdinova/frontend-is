@@ -1,39 +1,42 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
+import {buildUrl, fetchData, getData, postData} from "../utils/fetch.js";
 
 const ImportPage = () => {
     const [file, setFile] = useState(null);
     const [history, setHistory] = useState([]);
-
-    function replaceNullWithZero(obj) {
-        if (Array.isArray(obj)) {
-            return obj.map((item) => replaceNullWithZero(item));
-        } else if (typeof obj === 'object' && obj !== null) {
-            for (const key in obj) {
-                if (obj[key] === null) {
-                    obj[key] = 0;
-                } else if (typeof obj[key] === 'object') {
-                    obj[key] = replaceNullWithZero(obj[key]);
-                }
-            }
-        }
-        return obj;
-    }
-
     const [currentPage, setCurrentPage] = useState(1);
-    const goToPreviousPage = () => {
-        console.log(currentPage)
+    const token = localStorage.getItem("token");
+    const filterRef = useRef(null);
+    const filterColumnRef = useRef(null);
+    const sortedRef = useRef(null);
+    const idRef = useRef(null);
+
+    const goToPreviousPage = async () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
-            fetchHistory(currentPage - 1)
+            const updatedData = await fetchData('/import/history', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
+            setHistory(updatedData);
         }
-        console.log(currentPage)
     };
 
-    const goToNextPage = () => {
-        console.log(currentPage)
+    const goToNextPage = async () => {
         setCurrentPage(currentPage + 1);
-        console.log(currentPage)
-        fetchHistory(currentPage + 1)
+        const updatedData = await fetchData('/import/history', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
+        setHistory(updatedData);
+    };
+
+    useEffect(() => {
+        fetchPaginationData();
+    }, []);
+
+    const fetchPaginationData = async () => {
+        const filterColumn = filterColumnRef.current.value;
+        const filter = filterRef.current.value;
+        const sorted = sortedRef.current.value;
+        const url = '/import/history';
+        const buildedUrl = buildUrl(url, filterColumn, filter, sorted, currentPage);
+        const updatedData = await getData(buildedUrl, token);
+        setHistory(updatedData);
     };
 
     const handleFileChange = (e) => {
@@ -47,13 +50,8 @@ const ImportPage = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/import/upload', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: formData,
-            });
+            const url = `/import/upload`;
+            const response = await postData(url, formData);
             if (response.ok) {
                 alert('File uploaded successfully');
                 fetchPaginationData();
@@ -68,22 +66,15 @@ const ImportPage = () => {
     };
 
     const downloadImport = async () => {
-        let id = document.querySelector("#id3");
-        if (!id.value || isNaN(id.value)) {
-            alert("Please enter a id");
-            return;
-        } else {
-            id = parseInt(id.value);
-        }
-        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/import/download/${id}`, {
-            method: "POST",
-            responseType: 'blob',
-            headers: {
-                "Accept": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
+        const id = idRef.current?.value;
 
+        if (!id || isNaN(id)) {
+            alert("Please enter a valid ID");
+            return;
+        }
+
+        const url = `/import/download/${id}`;
+        const response = await postData(url);
         if (!(response.ok)) {
             const data = await response.text();
             alert(data);
@@ -103,88 +94,6 @@ const ImportPage = () => {
             link.click();
         }
     }
-
-    const fetchHistory = async (page) => {
-        let filterColomn = document.getElementById("filter-coloumn");
-        let filter = document.querySelector("#filter");
-        let sorted = document.getElementById("sorted");
-        if (filterColomn && filter) {
-            filterColomn = filterColomn.value;
-            filter = filter.value;
-        }
-        if (sorted) {
-            sorted = sorted.value;
-        }
-        let url = "?";
-        if (filterColomn && filter) {
-            url += "&filter-value=" + filter + "&filter-column=" + filterColomn;
-        }
-        if (page) {
-            url += "&page=" + page;
-        }
-        if (sorted) {
-            url += "&sorted=" + sorted;
-        }
-        if (url === "?") {
-            url = "";
-        }
-        console.log(sorted)
-        console.log(url);
-        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/import/history${url}`, {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }
-        });
-        const updatedData = replaceNullWithZero(await response.json());
-        setHistory(updatedData);
-    };
-
-    useEffect(() => {
-        fetchHistory();
-    }, []);
-
-    const fetchPaginationData = async () => {
-        console.log(currentPage);
-        console.log(typeof currentPage);
-        let filterColomn = document.getElementById("filter-coloumn");
-        let filter = document.querySelector("#filter");
-        let sorted = document.getElementById("sorted");
-        if (filterColomn && filter) {
-            filterColomn = filterColomn.value;
-            filter = filter.value;
-        }
-        if (sorted) {
-            sorted = sorted.value;
-        }
-        let url = "?";
-        if (filterColomn && filter) {
-            url += "&filter-value=" + filter + "&filter-column=" + filterColomn;
-        }
-        if (currentPage) {
-            url += "&page=" + currentPage;
-        }
-        if (sorted) {
-            url += "&sorted=" + sorted;
-        }
-        if (url === "?") {
-            url = "";
-        }
-        console.log(sorted)
-        console.log(url);
-        const response = await fetch(`http://localhost:8080/is-lab1-backend-1.0-SNAPSHOT/api/import/history${url}`, {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }
-        });
-        const updatedData = replaceNullWithZero(await response.json());
-        setHistory(updatedData);
-    };
-
-
     return (
         <>
             <div className="show-table-container">
@@ -210,9 +119,9 @@ const ImportPage = () => {
                     </tr>))}
                     </tbody>
                 </table>
-                <div className="showBlock">
+                <div className="block">
                     <label>Столбец для фильтрации:
-                        <select id="filter-coloumn">
+                        <select ref={filterColumnRef}>
                             <option value="fileName">File Name</option>
                             <option value="username">Username</option>
                             <option value="importTime">Import Time</option>
@@ -221,18 +130,18 @@ const ImportPage = () => {
                         </select>
                     </label>
                     <br/>
-                    <label className="text-field__label" htmlFor="filter"
+                    <label className="text-field__label"
                     >Фильтрация:
                     </label>
                     <input
                         className="text-field__input ticket"
                         placeholder="filter"
                         type="text"
-                        id="filter"
+                        ref={filterRef}
                     />
                     <br/>
                     <label>Столбец для сортировки:
-                        <select id="sorted">
+                        <select ref={sortedRef}>
                             <option value="id">ID</option>
                             <option value="fileName">File Name</option>
                             <option value="username">Username</option>
@@ -246,43 +155,41 @@ const ImportPage = () => {
                         <button
                             onClick={goToPreviousPage}
                             disabled={currentPage === 1}
-                            style={{marginRight: "10px", background: "#1a1a1a", paddingTop: "0px"}}
-                        >
+                            className="btn">
                             Previous
                         </button>
                         <span>Page {currentPage}</span>
                         <button
                             onClick={goToNextPage}
-                            style={{marginLeft: "10px", background: "#1a1a1a", paddingTop: "0px"}}
-                        >
+                            className="btn">
                             Next
                         </button>
                     </div>
-                    <button className="showBtn" onClick={fetchPaginationData}>Show</button>
+                    <button className="btn" onClick={fetchPaginationData}>Show</button>
                 </div>
 
-                <div className="deleteBlock">
+                <div className="block">
                     <div>Import File</div>
                     <input type="file" accept=".json" name="dataFile" onChange={handleFileChange}/>
                     <br/>
                     <br/>
-                    <button className="showBtn" onClick={handleUpload}>Upload</button>
+                    <button className="btn" onClick={handleUpload}>Upload</button>
                 </div>
-                <div className="deleteBlock">
-                    <div className="deleteFields">
-                        <label className="text-field__label item" htmlFor="id3"
+                <div className="block">
+                    <div className="fields">
+                        <label className="text-field__label item"
                         >Import ID:
                         </label>
                         <input
                             className="text-field__input item"
                             placeholder="id"
                             type="text"
-                            id="id3"
+                            ref={idRef}
                         />
                         <br/>
                     </div>
                     <br/>
-                    <button className="showBtn" onClick={downloadImport}>Download</button>
+                    <button className="btn" onClick={downloadImport}>Download</button>
                 </div>
             </div>
         </>

@@ -1,28 +1,29 @@
-import FormContainer from "./components/FormContainer/FormContainer.jsx";
-import TicketContainer from "./components/TicketContainer/TicketContainer.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import MainContainer from "./components/MainContainer/MainContainer.jsx";
+import ProtectedRoute from "./components/utils/ProtectedRoute.jsx";
 import {Route, Routes} from "react-router-dom";
-import CoordinatesContainer from "./components/CoordinatesPage/CoordinatesContainer.jsx";
-import EventContainer from "./components/EventPage/EventContainer.jsx";
-import VenueContainer from "./components/VenuePage/VenueContainer.jsx";
-import LocationContainer from "./components/LocationPage/LocationContainer.jsx";
-import PersonContainer from "./components/PersonPage/PersonContainer.jsx";
-import AdminContainer from "./components/AdminPage/AdminContainer.jsx";
-import ImportContainer from "./components/ImportPage/ImportContainer.jsx";
+import OrderForm from "./components/OrderForm/OrderForm.jsx";
+import TicketPage from "./components/pages/TicketPage.jsx";
+import CoordinatesPage from "./components/pages/CoordinatesPage.jsx";
+import EventPage from "./components/pages/EventPage.jsx";
+import VenuePage from "./components/pages/VenuePage.jsx";
+import LocationPage from "./components/pages/LocationPage.jsx";
+import PersonPage from "./components/pages/PersonPage.jsx";
+import AdminPage from "./components/pages/AdminPage.jsx";
+import ImportPage from "./components/pages/ImportPage.jsx";
 
 function App() {
 
     return (
         <Routes>
-            <Route path="/" element={<FormContainer/>}/>
-            <Route path="/entity" element={<ProtectedRoute><TicketContainer/></ProtectedRoute>}/>
-            <Route path="/coordinates" element={<ProtectedRoute><CoordinatesContainer/></ProtectedRoute>}/>
-            <Route path="/event" element={<ProtectedRoute><EventContainer/></ProtectedRoute>}/>
-            <Route path="/venue" element={<ProtectedRoute><VenueContainer/></ProtectedRoute>}/>
-            <Route path="/location" element={<ProtectedRoute><LocationContainer/></ProtectedRoute>}/>
-            <Route path="/person" element={<ProtectedRoute><PersonContainer/></ProtectedRoute>}/>
-            <Route path="/admin" element={<ProtectedRoute><AdminContainer/></ProtectedRoute>}/>
-            <Route path="/import" element={<ProtectedRoute><ImportContainer/></ProtectedRoute>}/>
+            <Route path="/" element={<OrderForm/>}/>
+            <Route path="/entity" element={<ProtectedRoute><MainContainer><TicketPage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/coordinates" element={<ProtectedRoute><MainContainer><CoordinatesPage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/event" element={<ProtectedRoute><MainContainer><EventPage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/venue" element={<ProtectedRoute><MainContainer><VenuePage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/location" element={<ProtectedRoute><MainContainer><LocationPage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/person" element={<ProtectedRoute><MainContainer><PersonPage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/admin" element={<ProtectedRoute><MainContainer><AdminPage/></MainContainer></ProtectedRoute>}/>
+            <Route path="/import" element={<ProtectedRoute><MainContainer><ImportPage/></MainContainer></ProtectedRoute>}/>
         </Routes>
     )
 }

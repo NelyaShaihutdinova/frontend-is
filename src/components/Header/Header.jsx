@@ -1,6 +1,6 @@
 import './Header.css';
 import {Link} from "react-router-dom";
-import {clearToken} from "../api.js";
+import {clearToken} from "../utils/fetch.js";
 export default function Header() {
     return (
         <>
@@ -33,14 +33,14 @@ export default function Header() {
                             <li className="menu-item">
                                 <Link to="/import">Import</Link>
                             </li>
-                            <li className="menu-item">
-                                <Link to="/" onClick={clearToken}>Logout</Link>
-                            </li>
                             {(localStorage.getItem("role") == "ADMIN") ? (
                                 <li className="menu-item">
                                     <Link to="/admin">Admin requests</Link>
                                 </li>
                             ) : (<li></li>)}
+                            <li className="menu-item">
+                                <Link to="/" onClick={clearToken}>Logout</Link>
+                            </li>
                         </ul>
                     </nav>
                 </div>
