@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {postData, getData, buildUrl, fetchData} from "../utils/fetch.js";
+import {postData, getData, buildUrl, fetchData, deleteData} from "../utils/fetch.js";
 import "./CoordinatesPage.css"
 
 const CoordinatesPage = () => {
@@ -18,14 +18,14 @@ const CoordinatesPage = () => {
     const goToPreviousPage = async () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
-            const updatedData = await fetchData('/coordinates/show', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
+            const updatedData = await fetchData('/coordinates', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
             setData(updatedData);
         }
     };
 
     const goToNextPage = async () => {
         setCurrentPage(currentPage + 1);
-        const updatedData = await fetchData('/coordinates/show', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
+        const updatedData = await fetchData('/coordinates', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
         setData(updatedData);
     };
 
@@ -64,7 +64,7 @@ const CoordinatesPage = () => {
         const fields = getFields();
         if (!validateFields(fields)) return;
 
-        const result = await postData(`/coordinates/create`, fields);
+        const result = await postData(`/coordinates`, fields);
 
         if (result.ok) {
             fetchPaginationData();
@@ -88,7 +88,7 @@ const CoordinatesPage = () => {
         if (!validateFields(fields)) return;
         const {id, ...ticket} = fields;
 
-        const url = `/coordinates/update/${fields.id}`;
+        const url = `/coordinates/${fields.id}`;
         const result = await postData(url, ticket);
 
         if (result.ok) {
@@ -107,8 +107,8 @@ const CoordinatesPage = () => {
             alert("Please enter a valid ID");
             return;
         }
-        const url = `/coordinates/delete/${id}?replace=${replaceId}`;
-        const response = await postData(url);
+        const url = `/coordinates/${id}?replace=${replaceId}`;
+        const response = await deleteData(url);
         if (!(response.ok)) {
             const data = await response.json();
             alert(data.message);
@@ -121,7 +121,7 @@ const CoordinatesPage = () => {
         const filterColumn = filterColumnRef.current.value;
         const filter = filterRef.current.value;
         const sorted = sortedRef.current.value;
-        const url = '/coordinates/show';
+        const url = '/coordinates';
         const buildedUrl = buildUrl(url, filterColumn, filter, sorted, currentPage);
         const updatedData = await getData(buildedUrl, token);
         setData(updatedData);

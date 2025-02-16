@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {postData, getData, buildUrl, fetchData} from "../utils/fetch.js";
+import {postData, getData, buildUrl, fetchData, deleteData} from "../utils/fetch.js";
 
 const PersonPage = () => {
         const [data, setData] = useState([]);
@@ -19,14 +19,14 @@ const PersonPage = () => {
         const goToPreviousPage = async () => {
             if (currentPage > 1) {
                 setCurrentPage(currentPage - 1);
-                const updatedData = await fetchData('/person/show', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
+                const updatedData = await fetchData('/person', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
                 setData(updatedData);
             }
         };
 
         const goToNextPage = async () => {
             setCurrentPage(currentPage + 1);
-            const updatedData = await fetchData('/person/show', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
+            const updatedData = await fetchData('/person', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
             setData(updatedData);
         };
 
@@ -69,7 +69,7 @@ const PersonPage = () => {
             const fields = getFields();
             if (!validateFields(fields)) return;
 
-            const result = await postData(`/person/create`, fields);
+            const result = await postData(`/person`, fields);
 
             if (result.ok) {
                 fetchPaginationData();
@@ -93,7 +93,7 @@ const PersonPage = () => {
             if (!validateFields(fields)) return;
             const {id, ...ticket} = fields;
 
-            const url = `/person/update/${fields.id}`;
+            const url = `/person/${fields.id}`;
             const result = await postData(url, ticket);
 
             if (result.ok) {
@@ -112,8 +112,8 @@ const PersonPage = () => {
                 alert("Please enter a valid ID");
                 return;
             }
-            const url = `/person/delete/${id}?replace=${replaceId}`;
-            const response = await postData(url);
+            const url = `/person/${id}?replace=${replaceId}`;
+            const response = await deleteData(url);
             if (!(response.ok)) {
                 const data = await response.json();
                 alert(data.message);
@@ -126,7 +126,7 @@ const PersonPage = () => {
             const filterColumn = filterColumnRef.current.value;
             const filter = filterRef.current.value;
             const sorted = sortedRef.current.value;
-            const url = '/person/show';
+            const url = '/person';
             const buildedUrl = buildUrl(url, filterColumn, filter, sorted, currentPage);
             const updatedData = await getData(buildedUrl, token);
             setData(updatedData);

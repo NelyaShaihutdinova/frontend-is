@@ -30,6 +30,16 @@ export const postData = async (url, data) => {
     });
 }
 
+export const deleteData = async (url) => {
+    return await fetch(`${API_BASE}${url}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
+
 export function replaceNullWithZero(obj) {
     if (Array.isArray(obj)) {
         return obj.map((item) => replaceNullWithZero(item));

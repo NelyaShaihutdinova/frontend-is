@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {getData, postData, buildUrl, fetchData} from "../utils/fetch.js";
+import {getData, postData, buildUrl, fetchData, deleteData} from "../utils/fetch.js";
 import './TicketPage.css';
 
 
@@ -33,14 +33,14 @@ const TicketPage = () => {
         const goToPreviousPage = async () => {
             if (currentPage > 1) {
                 setCurrentPage(currentPage - 1);
-                const updatedData = await fetchData('/ticket/show', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
+                const updatedData = await fetchData('/ticket', filterColumnRef, filterRef, sortedRef, currentPage - 1, token);
                 setData(updatedData);
             }
         };
 
         const goToNextPage = async () => {
             setCurrentPage(currentPage + 1);
-            const updatedData = await fetchData('/ticket/show', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
+            const updatedData = await fetchData('/ticket', filterColumnRef, filterRef, sortedRef, currentPage + 1, token);
             setData(updatedData);
         };
 
@@ -92,7 +92,7 @@ const TicketPage = () => {
             const fields = getFields();
             if (!validateFields(fields)) return;
 
-            const result = await postData(`/ticket/create`, fields);
+            const result = await postData(`/ticket`, fields);
 
             if (result.ok) {
                 fetchPaginationData();
@@ -116,7 +116,7 @@ const TicketPage = () => {
             if (!validateFields(fields)) return;
             const {id, ...ticket} = fields;
 
-            const url = `/ticket/update/${fields.id}`;
+            const url = `/ticket/${fields.id}`;
             const result = await postData(url, ticket);
 
             if (result.ok) {
@@ -134,8 +134,8 @@ const TicketPage = () => {
                 alert("Please enter a valid ID");
                 return;
             }
-            const url = `/ticket/delete/${id}`;
-            const response = await postData(url);
+            const url = `/ticket/${id}`;
+            const response = await deleteData(url);
             if (!(response.ok)) {
                 const data = await response.json();
                 alert(data.message);
@@ -229,7 +229,7 @@ const TicketPage = () => {
             const filterColumn = filterColumnRef.current.value;
             const filter = filterRef.current.value;
             const sorted = sortedRef.current.value;
-            const url = '/ticket/show';
+            const url = '/ticket';
             const buildedUrl = buildUrl(url, filterColumn, filter, sorted, currentPage);
             const updatedData = await getData(buildedUrl, token);
             setData(updatedData);
